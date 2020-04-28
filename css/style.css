@@ -1,4 +1,4 @@
-/* ================================= 
+/* =================================
   Base Element Styles
 ==================================== */
 
@@ -17,11 +17,11 @@ button {
 body {
   font: 1em/1.5;
   color: rgba(6, 49, 68, 0.9);
-	background: #CDE0FB;
+	background: #edf2f0;
 }
 
 header {
-	text-align: center;  
+	text-align: center;
 }
 
 h1 {
@@ -34,14 +34,14 @@ a {
   text-decoration: none;
 }
 
-/* ================================= 
+/* =================================
   Form Element Styles
 ==================================== */
 
 form {
 	padding: .875em 1.875em 1.875em;
-	background: #9BBEEF;
-	border: 2px solid rgba(8, 63, 87, 0.6);
+	background: #cdd8d4;
+	border: 2px solid #89938f;
 	border-radius: 3px;
 }
 
@@ -58,13 +58,13 @@ fieldset {
 
 legend,
 button {
-	font-size: 1.25em;	
+	font-size: 1.25em;
 }
 
 legend {
 	font-weight: bold;
 	padding-top: .5em;
-	border-top: 2px solid rgba(8, 63, 87, 0.6);
+	border-top: 2px solid #89938f;
 	margin-bottom: 1.125em;
 }
 
@@ -82,15 +82,15 @@ label {
 
 input,
 select {
-	margin-bottom: 1.125em;	
+	margin-bottom: 1.125em;
 }
 
 input {
 	font-size: 1em;
 	font-weight: 500;
 	padding: .8em;
-	background: #e9f6fb;
-	border: 2px solid rgb(111, 157, 220);
+	background: #edf2f0;
+	border: 2px solid #89938f;
 	border-radius: 3px;
 	outline: none;
 }
@@ -107,12 +107,12 @@ input[type="radio"] {
 }
 
 button {
-	color: #fff;
+	color: rgba(6, 49, 68, 0.9);
 	padding: .55em 1.25em;
-	background: #083f57;
+	background: #d6c99e;
 	margin: 1.25em 0 .5em;
 	cursor: pointer;
-	border: 2px solid black;
+	border: 2px solid #bcb497;
 	border-radius: 4px;
 	transition: all 0.5s;
 }
@@ -121,13 +121,13 @@ button:hover {
 	background: #6F9DDC;
 }
 
-input, 
-select, 
+input,
+select,
 option {
 	font-family: 'roboto', sans-serif;
 }
 
-/* ================================= 
+/* =================================
   Page Styles
 ==================================== */
 
@@ -162,11 +162,11 @@ option {
 	margin-top: 10px;
 	margin-bottom: 10px;
 	padding: 5px;
-	background: rgba(255, 255, 255, 0.1);
+	background: rgba(255, 255, 255, 0.2);
 	border-radius: 4px;
 }
 
-/* ================================= 
+/* =================================
   Helper Classes
 ==================================== */
 
@@ -180,7 +180,7 @@ option {
   clear: both;
 }
 
-/* ================================= 
+/* =================================
   Media Queries
 ==================================== */
 
