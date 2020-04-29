@@ -24,7 +24,7 @@ window.addEventListener("DOMContentLoaded", function() {
 
   const selectThemeText = document.createElement('option');
   selectThemeText.innerHTML = 'Please select a T-shirt theme';
-  selectThemeText.value = 'selecttheme';
+  selectThemeText.value = 'pleaseSelect';
   selectThemeText.selected = true;
   colorSelect.appendChild(selectThemeText);
 });
@@ -39,11 +39,16 @@ function chooseColor(type) {
   for(let i = 0; i < colorSelect.length; i +=1) {
     let option = colorSelect[i].text;
     if (option.includes(type)) {
-      colorSelect[i].style.display = "inherit";
-      colorSelect[i].classList = "show-color";
+      colorSelect[i].hidden = false;
     } else {
-      colorSelect[i].style.display = "none";
-      colorSelect[i].classList = "hide-color";
+      colorSelect[i].hidden = true;
+    }
+  }
+
+  for(let i = 0; i < colorSelect.length; i +=1) {
+    if (colorSelect[i].hidden === false) {
+      colorSelect[i].selected = true;
+      break;
     }
   }
 }
@@ -58,12 +63,16 @@ jobSelect.addEventListener('change', (event) => {
 
 designSelect.addEventListener('change', (event) => {
   if (event.target.value === "js puns") {
-    colorDiv.style.display = "inherit";
     chooseColor("JS Puns");
   } else if (event.target.value === "heart js") {
-    colorDiv.style.display = "inherit";
     chooseColor("JS shirt");
-  } else {
-    colorDiv.style.display = "none";
+  }
+});
+
+designSelect.addEventListener('click', (event) => {
+  if (event.target.value === "js puns") {
+    chooseColor("JS Puns");
+  } else if (event.target.value === "heart js") {
+    chooseColor("JS shirt");
   }
 });
