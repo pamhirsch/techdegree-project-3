@@ -1,11 +1,22 @@
+// set the name input field to be in focus when the page loads
 window.onload = function() {
   document.getElementById('name').focus();
 };
 
+// set global variables
 const colorSelect = document.getElementById('color');
 const jobSelect = document.getElementById('title');
 const colorDiv = document.querySelector('div#colors-js-puns');
 const designSelect = document.getElementById('design');
+
+/*
+* When the page content is loaded do the following:
+* 1. Find the "Select Theme" option in the Design dropdown and hide it.
+* 2. Choose the next option in the Design dropdown and make it the default.
+* 3. Hide all the options in the Color dropdown.
+* 4. Add an option to the Color dropdown that says "Please select a T-shirt theme"
+*    and make it the default.
+*/
 
 window.addEventListener("DOMContentLoaded", function() {
 
@@ -35,6 +46,14 @@ if (otherJobInput) {
   otherJobInput.style.display = 'none';
 }
 
+/*
+* The chooseColor option accepts a parameter for the type of tshirt
+* to show. It loops through all the tshirt color choices and if it
+* finds a match on the type, it sets hidden to false (makes it show).
+* If there is no match, it sets the color option to hidden. Finally,
+* it loops through the options again and as soon as it finds the first
+* non-hidden option, it makes it the default and leaves the loop.
+*/
 function chooseColor(type) {
   for(let i = 0; i < colorSelect.length; i +=1) {
     let option = colorSelect[i].text;
@@ -53,6 +72,12 @@ function chooseColor(type) {
   }
 }
 
+/*
+* Listens for a selection of "Other" in the Job Role field. If "Other"
+* is selected, it shows the Other Job Role input field which was hidden
+* earlier.
+*/
+
 jobSelect.addEventListener('change', (event) => {
   if (event.target.value === "other") {
     otherJobInput.style.display = 'inherit';
@@ -60,6 +85,11 @@ jobSelect.addEventListener('change', (event) => {
     otherJobInput.style.display = 'none';
   }
 });
+
+/*
+* Listens for a change in the Design dropdown box. On change,
+* it calls the chooseColor function based on the choice made.
+*/
 
 designSelect.addEventListener('change', (event) => {
   if (event.target.value === "js puns") {
@@ -69,10 +99,16 @@ designSelect.addEventListener('change', (event) => {
   }
 });
 
+/*
+* Listens for a click in the Design dropdown box. On click,
+* it calls the chooseColor function based on the choice made.
+*/
+
 designSelect.addEventListener('click', (event) => {
   if (event.target.value === "js puns") {
     chooseColor("JS Puns");
   } else if (event.target.value === "heart js") {
+
     chooseColor("JS shirt");
   }
 });
