@@ -8,6 +8,10 @@ const colorSelect = document.getElementById('color');
 const jobSelect = document.getElementById('title');
 const colorDiv = document.querySelector('div#colors-js-puns');
 const designSelect = document.getElementById('design');
+const totalCostDisplay = document.createElement('h3');
+const activitiesList = document.querySelector('fieldset.activities');
+
+let totalCost = 0;
 
 /*
 * When the page content is loaded do the following:
@@ -45,6 +49,12 @@ const otherJobInput = document.getElementById('other-title') ;
 if (otherJobInput) {
   otherJobInput.style.display = 'none';
 }
+
+// append the DOM element for the total cost information to the Activities
+// section
+
+const activitiesSection = document.querySelector('fieldset.activities');
+activitiesSection.appendChild(totalCostDisplay);
 
 /*
 * The chooseColor option accepts a parameter for the type of tshirt
@@ -110,5 +120,35 @@ designSelect.addEventListener('click', (event) => {
   } else if (event.target.value === "heart js") {
 
     chooseColor("JS shirt");
+  }
+});
+
+activitiesSection.addEventListener('click', (event) => {
+  let chosenActivityType = event.target.type;
+  let chosenActivity = event.target;
+  if (chosenActivityType == 'checkbox') {
+    let chosenActivityTime = chosenActivity.getAttribute('data-day-and-time');
+    let activityCost = parseInt(chosenActivity.getAttribute('data-cost'));
+    let activitiesCheckBoxes = activitiesList.getElementsByTagName('input');
+    if (chosenActivity.checked == true) {
+      totalCost += activityCost;
+    } else if (chosenActivity.checked == false) {
+      totalCost -= activityCost;
+    }
+
+  for(let i = 0; i < activitiesCheckBoxes.length; i += 1) {
+    let activityCheckBox = activitiesCheckBoxes[i];
+    let activityTime = activityCheckBox.getAttribute('data-day-and-time');
+    if (activityTime == chosenActivityTime && activityCheckBox != chosenActivity) {
+      if (activityCheckBox.checked && chosenActivity.checked) {
+        activityCheckBox.checked = false;
+        activityCheckBox.disabled = true;
+        totalCost -= activityCost;
+      } else if (activityCheckBox.disabled && chosenActivity.checked == false) {
+        activityCheckBox.disabled = false;
+      }
+    }
+  }
+  totalCostDisplay.innerHTML = `Total $${totalCost}`;
   }
 });
