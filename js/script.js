@@ -10,6 +10,7 @@ const colorDiv = document.querySelector('div#colors-js-puns');
 const designSelect = document.getElementById('design');
 const totalCostDisplay = document.createElement('h3');
 const activitiesList = document.querySelector('fieldset.activities');
+const paymentSelect = document.getElementById('payment');
 
 let totalCost = 0;
 
@@ -55,6 +56,27 @@ if (otherJobInput) {
 
 const activitiesSection = document.querySelector('fieldset.activities');
 activitiesSection.appendChild(totalCostDisplay);
+
+// hide the 'select payment option' from the dropdown on page load
+for (let i = 0; i < paymentSelect.length; i += 1) {
+  const paymentOption = paymentSelect[i].text;
+  if (paymentOption == 'Select Payment Method') {
+    paymentSelect[i].hidden = true;
+  } else if (paymentOption == 'Credit Card') {
+    paymentSelect[i].selected = true;
+  }
+}
+
+/*
+* Hide payment info that is not related to the Credit Card payment
+* choice (made default above) on page load.
+*/
+
+const creditCardText = document.querySelector('div.credit-card');
+const paypalText = document.querySelector('div.paypal');
+const bitcoinText = document.querySelector('div.bitcoin');
+paypalText.style.display = 'none';
+bitcoinText.style.display = 'none';
 
 /*
 * The chooseColor option accepts a parameter for the type of tshirt
@@ -123,6 +145,11 @@ designSelect.addEventListener('click', (event) => {
   }
 });
 
+/*
+* Listens for a click in the Activities checkboxes. On click,
+* add text.
+*/
+
 activitiesSection.addEventListener('click', (event) => {
   let chosenActivityType = event.target.type;
   let chosenActivity = event.target;
@@ -150,5 +177,28 @@ activitiesSection.addEventListener('click', (event) => {
     }
   }
   totalCostDisplay.innerHTML = `Total $${totalCost}`;
+  }
+});
+
+/*
+* Listens for a click in the Payment dropdown box. If a choice is made
+* the listener function checks to see what option was selected. based
+* on the selection, it displays the correct payment fields.
+*/
+
+paymentSelect.addEventListener('change', (event) => {
+  let chosenPaymentType = event.target.value;
+  if (chosenPaymentType == 'paypal') {
+    creditCardText.style.display = 'none';
+    bitcoinText.style.display = 'none';
+    paypalText.style.display = 'inherit';
+  } else if (chosenPaymentType == 'bitcoin') {
+    creditCardText.style.display = 'none';
+    bitcoinText.style.display = 'inherit';
+    paypalText.style.display = 'none';
+  } else if (chosenPaymentType == 'credit card') {
+    creditCardText.style.display = 'inherit';
+    bitcoinText.style.display = 'none';
+    paypalText.style.display = 'none';
   }
 });
