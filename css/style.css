@@ -167,6 +167,10 @@ option {
 	border-radius: 4px;
 }
 
+.err-msg {
+  color: red;
+}
+
 /* =================================
   Helper Classes
 ==================================== */
