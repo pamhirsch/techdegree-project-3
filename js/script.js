@@ -11,9 +11,6 @@ const designSelect = document.getElementById('design');
 const totalCostDisplay = document.createElement('h3');
 const activitiesList = document.querySelector('fieldset.activities');
 const paymentSelect = document.getElementById('payment');
-const form = document.getElementsByTagName('form');
-let validationPass = true;
-
 let totalCost = 0;
 
 /*
@@ -106,25 +103,32 @@ function chooseColor(type) {
   }
 }
 
-function runValidation(validationPass) {
-  validateName(validationPass);
-  validateEmail(validationPass);
-  validateActivities(validationPass);
-  console.log(`Activity test ${validationPass}`);
+function runValidation() {
+  const nameTest = validateName();
+  const emailTest = validateEmail();
+  const activitiesTest = validateActivities();
   const paymentChoices = document.getElementById('payment');
+  let ccTest = true;
   for (let i = 0; i < paymentChoices.length; i += 1) {
     let paymentChoice = paymentChoices[i].text;
     if (paymentChoice == 'Credit Card' && paymentChoices[i].selected) {
-      validateCreditCard(validationPass);
-      validateZipCode(validationPass);
-      validateCVV(validationPass);
+      const ccNumbTest = validateCreditCard();
+      const zipTest = validateZipCode();
+      const cvvTest = validateCVV();
+      if (ccNumbTest != true || zipTest != true || cvvTest != true) {
+        ccTest = false;
+      }
     }
   }
-  console.log(validationPass);
-  return validationPass;
+  if (nameTest != true || emailTest != true || activitiesTest != true || ccTest != true) {
+    return false;
+  } else {
+    return true;
+  }
 }
 
 function validateName() {
+  event.preventDefault();
   const nameRegex = /^[A-Za-z\.\s]+$/;
   const nameValue = document.getElementById('name').value;
   const nameResultPass = nameRegex.test(nameValue);
@@ -133,18 +137,22 @@ function validateName() {
     if (nameErrMsg != null) {
       nameErrMsg.parentNode.removeChild(nameErrMsg);
     }
+    return true;
   } else if (nameResultPass == false && nameErrMsg == null) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.getElementById('name');
     errMsg.classList = 'name-error-msg err-msg';
     errMsg.innerHTML = '***Please enter a valid name. No numerals are allowed.***';
     errMsgPlacement.before(errMsg);
+    return false;
+  } else {
+    return false;
   }
-  return nameResultPass;
-  event.preventDefault();
+
 }
 
 function validateEmail() {
+  event.preventDefault();
   const emailRegex = /^[A-Za-z0-9]*[@][A-Za-z0-9]*\.\w+$/;
   const emailValue = document.getElementById('mail').value;
   const emailResultPass = emailRegex.test(emailValue);
@@ -153,28 +161,33 @@ function validateEmail() {
     if (emailErrMsg != null) {
       emailErrMsg.parentNode.removeChild(emailErrMsg);
     }
+    return true;
   } else if (emailResultPass == false && emailErrMsg == null) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.getElementById('mail');
     errMsg.classList = 'email-error-msg err-msg';
     errMsg.innerHTML = '***Please enter a valid email address.***';
     errMsgPlacement.before(errMsg);
+    return false;
+  } else {
+    return false;
   }
-  return emailResultPass;
-  event.preventDefault();
+
 }
 
 function validateActivities() {
+  event.preventDefault();
   const checkBoxes = document.querySelectorAll('input[type="checkbox"]');
   let checkBoxValidated = false;
   const activityErrMsg = document.querySelector('p.activity-error-msg');
   for (let i = 0; i < checkBoxes.length; i += 1) {
     if (checkBoxes[i].checked) {
       checkBoxValidated = true;
+
       if (activityErrMsg != null) {
         activityErrMsg.parentNode.removeChild(activityErrMsg);
       }
-      return checkBoxValidated;
+      return true;
     }
   }
 
@@ -184,13 +197,12 @@ function validateActivities() {
     errMsg.classList = 'activity-error-msg err-msg';
     errMsg.innerHTML = '***Please choose at least one activity.***';
     errMsgPlacement.after(errMsg);
-    return checkBoxValidated;
   }
-
-  event.preventDefault();
+  return false;
 }
 
 function validateCreditCard() {
+  event.preventDefault();
   const ccRegex = /^[0-9]{13,16}$/;
   const ccValue = document.getElementById('cc-num').value;
   const ccResultPass = ccRegex.test(ccValue);
@@ -199,18 +211,22 @@ function validateCreditCard() {
     if (ccErrMsg != null) {
       ccErrMsg.parentNode.removeChild(ccErrMsg);
     }
+    return true;
   } else if (ccResultPass == false && ccErrMsg == null) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.querySelector('div.credit-card');
     errMsg.classList = 'cc-error-msg err-msg';
     errMsg.innerHTML = '***Credit card number must be between 13 and 16 digits.***';
     errMsgPlacement.before(errMsg);
+    return false;
+  } else {
+    return false;
   }
-  return ccResultPass;
-  event.preventDefault();
+
 }
 
 function validateZipCode() {
+  event.preventDefault();
   const zipRegex = /^[0-9]{5}$/;
   const zipValue = document.getElementById('zip').value;
   const zipResultPass = zipRegex.test(zipValue);
@@ -219,18 +235,22 @@ function validateZipCode() {
     if (zipErrMsg != null) {
       zipErrMsg.parentNode.removeChild(zipErrMsg);
     }
+    return true;
   } else if (zipResultPass == false && zipErrMsg == null) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.querySelector('div.credit-card');
     errMsg.classList = 'zip-error-msg err-msg';
     errMsg.innerHTML = '***Zip code must be 5 digits.***';
     errMsgPlacement.before(errMsg);
+    return false;
+  } else {
+    return false;
   }
-  return zipResultPass;
-  event.preventDefault();
+
 }
 
 function validateCVV() {
+  event.preventDefault();
   const cvvRegex = /^[0-9]{3}$/;
   const cvvValue = document.getElementById('cvv').value;
   const cvvResultPass = cvvRegex.test(cvvValue);
@@ -239,15 +259,18 @@ function validateCVV() {
     if (cvvErrMsg != null) {
       cvvErrMsg.parentNode.removeChild(cvvErrMsg);
     }
+    return true;
   } else if (cvvResultPass == false && cvvErrMsg == null) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.querySelector('div.credit-card');
     errMsg.classList = 'cvv-error-msg err-msg';
     errMsg.innerHTML = '***CVV code must be 3 digits.***';
     errMsgPlacement.before(errMsg);
+    return false;
+  } else {
+    return false;
   }
-  return cvvResultPass;
-  event.preventDefault();
+
 }
 
 /*
@@ -350,12 +373,39 @@ paymentSelect.addEventListener('change', (event) => {
 });
 
 /*
+* Listens for a change in the Payemnt dropdown box. On change,
+* if there are any error messages displayed, remove them.
+*/
+
+paymentSelect.addEventListener('change', (event) => {
+  const ccErrMsg = document.querySelector('p.cc-error-msg');
+  const zipErrMsg = document.querySelector('p.zip-error-msg');
+  const cvvErrMsg = document.querySelector('p.cvv-error-msg');
+  if (ccErrMsg !=null) {
+    ccErrMsg.parentNode.removeChild(ccErrMsg);
+  }
+  if (zipErrMsg !=null) {
+    zipErrMsg.parentNode.removeChild(zipErrMsg);
+  }
+  if (cvvErrMsg !=null) {
+    cvvErrMsg.parentNode.removeChild(cvvErrMsg);
+  }
+
+});
+
+/*
 * Listens for a submit event.
 *
 *
 */
-const submitButton = document.querySelector('button');
-submitButton.addEventListener('click', (event) => {
-  runValidation(validationPass);
-  console.log(validationPass);
+
+const formElement = document.querySelector('form');
+formElement.addEventListener('submit', (event) => {
+  const formValidationTest = runValidation();
+  if (formValidationTest) {
+    formElement.reset();
+  } else {
+    event.preventDefault();
+    console.log(formValidationTest);
+  }
 });
