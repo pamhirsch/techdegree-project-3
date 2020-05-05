@@ -171,6 +171,13 @@ option {
   color: red;
 }
 
+p.tooltip {
+  background-color: #fefbc4;
+  color: purple;
+  margin: 0 0 25px;
+  padding: 10px;
+}
+
 /* =================================
   Helper Classes
 ==================================== */

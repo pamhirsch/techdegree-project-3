@@ -11,6 +11,7 @@ const designSelect = document.getElementById('design');
 const totalCostDisplay = document.createElement('h3');
 const activitiesList = document.querySelector('fieldset.activities');
 const paymentSelect = document.getElementById('payment');
+const nameSelect = document.getElementById('name');
 let totalCost = 0;
 
 /*
@@ -50,33 +51,38 @@ if (otherJobInput) {
   otherJobInput.style.display = 'none';
 }
 
+// hide the color label and selection upon page load (exceeds)
+function hideColorInfo() {
+  colorDiv.style.display = 'none';
+}
+hideColorInfo();
+
 // append the DOM element for the total cost information to the Activities
 // section
 
 const activitiesSection = document.querySelector('fieldset.activities');
 activitiesSection.appendChild(totalCostDisplay);
 
-// hide the 'select payment option' from the dropdown on page load
-for (let i = 0; i < paymentSelect.length; i += 1) {
-  const paymentOption = paymentSelect[i].text;
-  if (paymentOption == 'Select Payment Method') {
-    paymentSelect[i].hidden = true;
-  } else if (paymentOption == 'Credit Card') {
-    paymentSelect[i].selected = true;
-  }
-}
-
-/*
-* Hide payment info that is not related to the Credit Card payment
-* choice (made default above) on page load.
-*/
-
 const creditCardText = document.querySelector('div.credit-card');
 const paypalText = document.querySelector('div.paypal');
 const bitcoinText = document.querySelector('div.bitcoin');
-paypalText.style.display = 'none';
-bitcoinText.style.display = 'none';
 
+function hideSelectPayment() {
+// hide the 'select payment option' from the dropdown on page load and reset
+  for (let i = 0; i < paymentSelect.length; i += 1) {
+    const paymentOption = paymentSelect[i].text;
+    if (paymentOption == 'Select Payment Method') {
+      paymentSelect[i].hidden = true;
+    } else if (paymentOption == 'Credit Card') {
+      paymentSelect[i].selected = true;
+    }
+  }
+  creditCardText.style.display = 'inherit';
+  paypalText.style.display = 'none';
+  bitcoinText.style.display = 'none';
+}
+
+hideSelectPayment();
 /*
 * The chooseColor option accepts a parameter for the type of tshirt
 * to show. It loops through all the tshirt color choices and if it
@@ -134,22 +140,40 @@ function validateName() {
   const nameResultPass = nameRegex.test(nameValue);
   const nameErrMsg = document.querySelector('p.name-error-msg');
   if (nameResultPass) {
-    if (nameErrMsg != null) {
-      nameErrMsg.parentNode.removeChild(nameErrMsg);
-    }
     return true;
-  } else if (nameResultPass == false && nameErrMsg == null) {
-    const errMsg = document.createElement('p');
-    const errMsgPlacement = document.getElementById('name');
-    errMsg.classList = 'name-error-msg err-msg';
-    errMsg.innerHTML = '***Please enter a valid name. No numerals are allowed.***';
-    errMsgPlacement.before(errMsg);
-    return false;
   } else {
     return false;
   }
-
 }
+
+function isValidUsername(name) {
+  return /^[A-Za-z\.\s]+$/.test(name);
+}
+
+function showOrRemoveTip(show, message, element) {
+  const tipMessage = document.createElement('p');
+  tipMessage.classList = 'tooltip';
+  const tipErrMsg = document.querySelector("p.tooltip");
+  if (show && tipErrMsg == null) {
+    tipMessage.innerHTML = message;
+    element.before(tipMessage);
+  } else if( show == false && tipErrMsg != null) {
+    tipErrMsg.parentNode.removeChild(tipErrMsg);
+  }
+}
+
+function createListener(validator) {
+  return e => {
+    const inputElement = e.target;
+    const text = e.target.value;
+    const valid = validator(text);
+    const showTip = text !== "" && !valid;
+    const toolTipMsg = `Please enter only letters, spaces, and periods.`;
+    showOrRemoveTip(showTip, toolTipMsg, inputElement);
+  };
+}
+
+nameSelect.addEventListener("input", createListener(isValidUsername));
 
 function validateEmail() {
   event.preventDefault();
@@ -157,12 +181,10 @@ function validateEmail() {
   const emailValue = document.getElementById('mail').value;
   const emailResultPass = emailRegex.test(emailValue);
   const emailErrMsg = document.querySelector('p.email-error-msg');
-  if (emailResultPass) {
-    if (emailErrMsg != null) {
-      emailErrMsg.parentNode.removeChild(emailErrMsg);
-    }
-    return true;
-  } else if (emailResultPass == false && emailErrMsg == null) {
+  if (emailErrMsg != null) {
+    emailErrMsg.parentNode.removeChild(emailErrMsg);
+  }
+  if (emailResultPass == false) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.getElementById('mail');
     errMsg.classList = 'email-error-msg err-msg';
@@ -170,7 +192,7 @@ function validateEmail() {
     errMsgPlacement.before(errMsg);
     return false;
   } else {
-    return false;
+    return true;
   }
 
 }
@@ -207,20 +229,22 @@ function validateCreditCard() {
   const ccValue = document.getElementById('cc-num').value;
   const ccResultPass = ccRegex.test(ccValue);
   const ccErrMsg = document.querySelector('p.cc-error-msg');
-  if (ccResultPass) {
-    if (ccErrMsg != null) {
-      ccErrMsg.parentNode.removeChild(ccErrMsg);
-    }
-    return true;
-  } else if (ccResultPass == false && ccErrMsg == null) {
+  if (ccErrMsg != null) {
+    ccErrMsg.parentNode.removeChild(ccErrMsg);
+  }
+  if (ccResultPass == false) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.querySelector('div.credit-card');
     errMsg.classList = 'cc-error-msg err-msg';
-    errMsg.innerHTML = '***Credit card number must be between 13 and 16 digits.***';
+    if (ccValue == '') {
+      errMsg.innerHTML = '***Please enter a credit card number.***';
+    } else {
+      errMsg.innerHTML = '***Credit card number must be between 13 and 16 digits.***';
+    }
     errMsgPlacement.before(errMsg);
     return false;
   } else {
-    return false;
+    return true;
   }
 
 }
@@ -231,12 +255,11 @@ function validateZipCode() {
   const zipValue = document.getElementById('zip').value;
   const zipResultPass = zipRegex.test(zipValue);
   const zipErrMsg = document.querySelector('p.zip-error-msg');
-  if (zipResultPass) {
-    if (zipErrMsg != null) {
-      zipErrMsg.parentNode.removeChild(zipErrMsg);
-    }
-    return true;
-  } else if (zipResultPass == false && zipErrMsg == null) {
+  if (zipErrMsg != null) {
+    zipErrMsg.parentNode.removeChild(zipErrMsg);
+  }
+
+  if (zipResultPass == false) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.querySelector('div.credit-card');
     errMsg.classList = 'zip-error-msg err-msg';
@@ -244,7 +267,7 @@ function validateZipCode() {
     errMsgPlacement.before(errMsg);
     return false;
   } else {
-    return false;
+    return true;
   }
 
 }
@@ -255,12 +278,10 @@ function validateCVV() {
   const cvvValue = document.getElementById('cvv').value;
   const cvvResultPass = cvvRegex.test(cvvValue);
   const cvvErrMsg = document.querySelector('p.cvv-error-msg');
-  if (cvvResultPass) {
-    if (cvvErrMsg != null) {
-      cvvErrMsg.parentNode.removeChild(cvvErrMsg);
-    }
-    return true;
-  } else if (cvvResultPass == false && cvvErrMsg == null) {
+  if (cvvErrMsg != null) {
+    cvvErrMsg.parentNode.removeChild(cvvErrMsg);
+  }
+  if (cvvResultPass == false) {
     const errMsg = document.createElement('p');
     const errMsgPlacement = document.querySelector('div.credit-card');
     errMsg.classList = 'cvv-error-msg err-msg';
@@ -268,7 +289,7 @@ function validateCVV() {
     errMsgPlacement.before(errMsg);
     return false;
   } else {
-    return false;
+    return true;
   }
 
 }
@@ -293,6 +314,7 @@ jobSelect.addEventListener('change', (event) => {
 */
 
 designSelect.addEventListener('change', (event) => {
+  colorDiv.style.display = 'inherit';
   if (event.target.value === "js puns") {
     chooseColor("JS Puns");
   } else if (event.target.value === "heart js") {
@@ -306,10 +328,10 @@ designSelect.addEventListener('change', (event) => {
 */
 
 designSelect.addEventListener('click', (event) => {
+  colorDiv.style.display = 'inherit'
   if (event.target.value === "js puns") {
     chooseColor("JS Puns");
   } else if (event.target.value === "heart js") {
-
     chooseColor("JS shirt");
   }
 });
@@ -322,6 +344,7 @@ designSelect.addEventListener('click', (event) => {
 activitiesSection.addEventListener('click', (event) => {
   let chosenActivityType = event.target.type;
   let chosenActivity = event.target;
+  totalCostDisplay.style.display = 'inherit';
   if (chosenActivityType == 'checkbox') {
     let chosenActivityTime = chosenActivity.getAttribute('data-day-and-time');
     let activityCost = parseInt(chosenActivity.getAttribute('data-cost'));
@@ -394,6 +417,12 @@ paymentSelect.addEventListener('change', (event) => {
 });
 
 /*
+* Listens for the entry of data in the Name field and
+* provides a helpful message until the data is entered correctly.
+*/
+
+
+/*
 * Listens for a submit event.
 *
 *
@@ -404,8 +433,11 @@ formElement.addEventListener('submit', (event) => {
   const formValidationTest = runValidation();
   if (formValidationTest) {
     formElement.reset();
+    hideSelectPayment();
+    hideColorInfo();
+    totalCostDisplay.style.display = 'none';
+    totalCost = 0;
   } else {
     event.preventDefault();
-    console.log(formValidationTest);
   }
 });
