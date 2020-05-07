@@ -83,8 +83,9 @@ function hideSelectPayment() {
 }
 
 hideSelectPayment();
+
 /*
-* The chooseColor option accepts a parameter for the type of tshirt
+* The chooseColor function accepts a parameter for the type of tshirt
 * to show. It loops through all the tshirt color choices and if it
 * finds a match on the type, it sets hidden to false (makes it show).
 * If there is no match, it sets the color option to hidden. Finally,
@@ -108,6 +109,12 @@ function chooseColor(type) {
     }
   }
 }
+
+/*
+* The runValid function runs all the individual validation functions
+* and returns either true (all validations passed) of false if at
+* least 1 validation fails.
+*/
 
 function runValidation() {
   const nameTest = validateName();
@@ -133,6 +140,12 @@ function runValidation() {
   }
 }
 
+/*
+* The validateName function is part of the original (not exceeds) code.
+* If checks the name input to make sure that only letter, spaces or
+* periods are entered. Returns true for pass and false for fail.
+*/
+
 function validateName() {
   event.preventDefault();
   const nameRegex = /^[A-Za-z\.\s]+$/;
@@ -146,9 +159,29 @@ function validateName() {
   }
 }
 
+/*
+* The isValidUsername function tests that any content entered in
+* the name field is either a letter, spaces or
+* periods. Returns true for pass and false for fail.
+*/
 function isValidUsername(name) {
   return /^[A-Za-z\.\s]+$/.test(name);
 }
+
+/*
+* The ishowOrRemoveTip function is an Exceeds Expectations bit of
+* code. It is called by the createListener function to display
+* tooltip messages and the viewer enters data in the Name input
+* field. It accepts 3 parameters - show, message and element.
+* Show will be true if the data does not pass validation, message
+* is the specific message to show, and element is the field being
+* valdiated. The original code for this came from the Team Treehouse
+* class - Regular Expressions in JavaScript - Validating a Username.
+* If show is true and a message has not already been displayed, a
+* new message will be displayed. If show is false (meaning the input
+* field has been validated) and there is an existing message, the
+* message will be removed.
+*/
 
 function showOrRemoveTip(show, message, element) {
   const tipMessage = document.createElement('p');
@@ -173,7 +206,20 @@ function createListener(validator) {
   };
 }
 
+// event listener for data input into the name input field
 nameSelect.addEventListener("input", createListener(isValidUsername));
+
+/*
+* The validateEmail function validates the content entered into the
+* email field. It must be any number of letters (upper and lower case
+* allowed), followed by an '@', followed by any number of letters
+* (upper and lower case allowed), followed by a period and then
+* letters, etc. If an error message has already been displayed for
+* the field, it will be removed. If the validation has not passed
+* a new error message will be displayed and false indicating a failure
+* is passed to the calling function. Otherwis no error message is displayed
+* and true for pass is returned.
+*/
 
 function validateEmail() {
   event.preventDefault();
@@ -196,6 +242,16 @@ function validateEmail() {
   }
 
 }
+
+/*
+* The validateActivities function checks to make sure that at least
+* one activity has been chosen to pass. If an error message has already
+* been displayed for the selection, it will be removed.
+* If the validation has not passed
+* a new error message will be displayed and false indicating a failure
+* is passed to the calling function. Otherwise no error message is displayed
+* and true for pass is returned.
+*/
 
 function validateActivities() {
   event.preventDefault();
@@ -223,6 +279,18 @@ function validateActivities() {
   return false;
 }
 
+/*
+* The validateCreditCard function validates the content entered into the
+* cc field. It must be only numbers and there must be between 13 and 16
+* of them to pass. If an error message has already been displayed for
+* the field, it will be removed. If the validation has not passed
+* a new error message will be displayed and false indicating a failure
+* is passed to the calling function. Otherwise no error message is displayed
+* and true for pass is returned.
+* Additionally, one of two different messages could be displayed based
+* on whether the field is empty or not.
+*/
+
 function validateCreditCard() {
   event.preventDefault();
   const ccRegex = /^[0-9]{13,16}$/;
@@ -249,6 +317,16 @@ function validateCreditCard() {
 
 }
 
+/*
+* The validateZipCode function validates the content entered into the
+* zip field. It must be only numbers and there must be exactly 5
+* of them to pass. If an error message has already been displayed for
+* the field, it will be removed. If the validation has not passed
+* a new error message will be displayed and false indicating a failure
+* is passed to the calling function. Otherwise no error message is displayed
+* and true for pass is returned.
+*/
+
 function validateZipCode() {
   event.preventDefault();
   const zipRegex = /^[0-9]{5}$/;
@@ -271,6 +349,16 @@ function validateZipCode() {
   }
 
 }
+
+/*
+* The validateCVV function validates the content entered into the
+* CVV field. It must be only numbers and there must be exactly 3
+* of them to pass. If an error message has already been displayed for
+* the field, it will be removed. If the validation has not passed
+* a new error message will be displayed and false indicating a failure
+* is passed to the calling function. Otherwise no error message is displayed
+* and true for pass is returned.
+*/
 
 function validateCVV() {
   event.preventDefault();
@@ -338,7 +426,14 @@ designSelect.addEventListener('click', (event) => {
 
 /*
 * Listens for a click in the Activities checkboxes. On click,
-* add text.
+* the arrow function checks to see if clicked element is a checkbox.
+* If yes, it gets data about day/time and cost for the clicked
+* event. If the event has been clicked on, the total cost field
+* is incremented. If clicked off, the total cost field is decremented.
+* The function then next checks to see if there are any other events
+* that have been chosen already that match the day/time of the newly
+* chosen event. If there is, the newly chosen event is selected and
+* the matching event is disabled and unchecked.
 */
 
 activitiesSection.addEventListener('click', (event) => {
@@ -417,15 +512,9 @@ paymentSelect.addEventListener('change', (event) => {
 });
 
 /*
-* Listens for the entry of data in the Name field and
-* provides a helpful message until the data is entered correctly.
-*/
-
-
-/*
-* Listens for a submit event.
-*
-*
+* Listens for a submit event on the form. The master validation fumction
+* is called. If true is returned (all validations pass) the form is
+* reset. Otherwise nothing happens.
 */
 
 const formElement = document.querySelector('form');
