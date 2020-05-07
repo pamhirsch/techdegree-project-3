@@ -437,6 +437,7 @@ formElement.addEventListener('submit', (event) => {
     hideColorInfo();
     totalCostDisplay.style.display = 'none';
     totalCost = 0;
+    document.getElementById('name').focus();
   } else {
     event.preventDefault();
   }
