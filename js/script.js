@@ -12,6 +12,7 @@ const totalCostDisplay = document.createElement('h3');
 const activitiesList = document.querySelector('fieldset.activities');
 const paymentSelect = document.getElementById('payment');
 const nameSelect = document.getElementById('name');
+let nameErrMsg = null;
 let totalCost = 0;
 
 /*
@@ -25,14 +26,14 @@ let totalCost = 0;
 
 window.addEventListener("DOMContentLoaded", function() {
 
-  for (let y = 0; y < designSelect.options.length; y += 1) {
-    if (designSelect.options[y].text === 'Select Theme') {
-      designSelect.options[y].hidden = true;
-    } else {
-      designSelect.options[y].selected = true;
-      break;
-    }
-  }
+  // for (let y = 0; y < designSelect.options.length; y += 1) {
+  //   if (designSelect.options[y].text === 'Select Theme') {
+  //     designSelect.options[y].hidden = true;
+  //   } else {
+  //     designSelect.options[y].selected = true;
+  //     break;
+  //   }
+  // }
 
   for (let i = 0; i < colorSelect.options.length; i += 1 ) {
     colorSelect.options[i].hidden = true;
@@ -56,6 +57,16 @@ function hideColorInfo() {
   colorDiv.style.display = 'none';
 }
 hideColorInfo();
+
+// set all the activities to active by removing any disabled statuses
+function clearActivities() {
+  const activityList = document.querySelectorAll('input[type=checkbox]');
+  for (let i = 0; i < activityList.length; i += 1) {
+    activityList[i].disabled = false;
+    let activityLabel = activityList[i].parentNode;
+    activityLabel.style.color = "#000000";
+  }
+}
 
 // append the DOM element for the total cost information to the Activities
 // section
@@ -151,12 +162,21 @@ function validateName() {
   const nameRegex = /^[A-Za-z\.\s]+$/;
   const nameValue = document.getElementById('name').value;
   const nameResultPass = nameRegex.test(nameValue);
-  const nameErrMsg = document.querySelector('p.name-error-msg');
-  if (nameResultPass) {
-    return true;
-  } else {
-    return false;
+  nameErrMsg = document.querySelector('p.name-error-msg');
+  if (nameErrMsg != null) {
+    nameErrMsg.parentNode.removeChild(nameErrMsg);
   }
+  if (nameResultPass == false) {
+    const errMsg = document.createElement('p');
+    const errMsgPlacement = document.getElementById('name');
+    errMsg.classList = 'name-error-msg err-msg';
+    errMsg.innerHTML = '***Name cannot be blank.***';
+    errMsgPlacement.before(errMsg);
+    return false;
+  } else {
+    return true;
+  }
+
 }
 
 /*
@@ -184,6 +204,9 @@ function isValidUsername(name) {
 */
 
 function showOrRemoveTip(show, message, element) {
+  if (nameErrMsg != null) {
+    nameErrMsg.parentNode.removeChild(nameErrMsg);
+  }
   const tipMessage = document.createElement('p');
   tipMessage.classList = 'tooltip';
   const tipErrMsg = document.querySelector("p.tooltip");
@@ -446,23 +469,28 @@ activitiesSection.addEventListener('click', (event) => {
     let activitiesCheckBoxes = activitiesList.getElementsByTagName('input');
     if (chosenActivity.checked == true) {
       totalCost += activityCost;
+      for(let i = 0; i < activitiesCheckBoxes.length; i += 1) {
+        let activityCheckBox = activitiesCheckBoxes[i];
+        let activityTime = activityCheckBox.getAttribute('data-day-and-time');
+        if (activityTime == chosenActivityTime && activityCheckBox != chosenActivity) {
+          activityCheckBox.disabled = true;
+          let activityLabel = activityCheckBox.parentNode;
+          activityLabel.style.color = "#666666";
+        }
+      }
     } else if (chosenActivity.checked == false) {
       totalCost -= activityCost;
-    }
-
-  for(let i = 0; i < activitiesCheckBoxes.length; i += 1) {
-    let activityCheckBox = activitiesCheckBoxes[i];
-    let activityTime = activityCheckBox.getAttribute('data-day-and-time');
-    if (activityTime == chosenActivityTime && activityCheckBox != chosenActivity) {
-      if (activityCheckBox.checked && chosenActivity.checked) {
-        activityCheckBox.checked = false;
-        activityCheckBox.disabled = true;
-        totalCost -= activityCost;
-      } else if (activityCheckBox.disabled && chosenActivity.checked == false) {
-        activityCheckBox.disabled = false;
+      for(let i = 0; i < activitiesCheckBoxes.length; i += 1) {
+        let activityCheckBox = activitiesCheckBoxes[i];
+        let activityTime = activityCheckBox.getAttribute('data-day-and-time');
+        if (activityTime == chosenActivityTime && activityCheckBox != chosenActivity) {
+          activityCheckBox.disabled = false;
+          let activityLabel = activityCheckBox.parentNode;
+          activityLabel.style.color = "#000000";
+        }
       }
     }
-  }
+
   totalCostDisplay.innerHTML = `Total $${totalCost}`;
   }
 });
@@ -524,6 +552,7 @@ formElement.addEventListener('submit', (event) => {
     formElement.reset();
     hideSelectPayment();
     hideColorInfo();
+    clearActivities();
     totalCostDisplay.style.display = 'none';
     totalCost = 0;
     document.getElementById('name').focus();
